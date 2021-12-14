@@ -1,7 +1,11 @@
 const express = require('express');
 const path = require('path');
 const hbs = require('hbs');
+const geocode = require('./utils/geocode.js');
+const forecast = require('./utils/forecast.js');
+
 const app = express();
+const port = process.env.PORT || 3000;
 
 // Define paths for express config
 const publicDirectory = path.join(__dirname, '../public');
@@ -37,8 +41,40 @@ app.get('/help', (req, res) => {
     });
 })
 
-app.get('weather', (req, res) => {
-    res.send('Weather Forecast');
+app.get('/weather', (req, res) => {
+    if (!req.query.address) {
+        return res.send({
+            'error': 'You must provide an address'
+        });
+    };
+    geocode(req.query.address, (error, { latitude, longitude, location } = {}) => {
+        if (error) {
+            return res.send({ error });
+        }
+
+        forecast(latitude, longitude, (error, forecasrdata) => {
+            if (error) {
+                return res.send({ error });
+            }
+            res.send({
+                'Location': location,
+                'Forecast': forecasrdata,
+                'address': req.query.address
+            });
+        });
+    });
+})
+
+app.get('/products', (req, res) => {
+    if (!req.query.search) {
+        return res.send({
+            'error': 'You must provide a address term'
+        });
+    };
+    console.log(req.query.search)
+    res.send({
+        'products': []
+    })
 })
 app.get('/help/*', (req, res) => {
     res.render('404', {
@@ -56,6 +92,6 @@ app.get('*', (req, res) => {
     });
 })
 
-app.listen(3000, () => {
-    console.log('listening at 3000');
+app.listen(port, () => {
+    console.log('listening at' + port);
 })

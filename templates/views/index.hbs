@@ -6,15 +6,25 @@
 
     <link rel="icon" href="/images/weather.png">
     <link rel="stylesheet" href="/css/style.css">
-    <script src="/js/app.js"></script>
 </head>
 
 <body>
     <div class="main-content">
          {{>header}}
-    
+    <p>Use this sitefor your weather!</p>
+
+    <form >
+        <input name="location" type="text" placeholder="Locaiton">
+        <button>Search</button>
+    </form>
+
+    <p id="message-1"></p>
+    <p id="message-2"></p>
     </div>
      {{>footer}}
+
+         <script src="/js/app.js"></script>
+
 </body>
 
 </html>
